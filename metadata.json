@@ -1,0 +1,7 @@
+{
+  "name": "AI Interviewer Chatbot",
+  "description": "A voice chatbot application that conducts basic pre-screening interviews using Gemini Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

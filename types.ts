@@ -1,0 +1,13 @@
+
+export enum Speaker {
+  USER = 'user',
+  MODEL = 'model',
+  SYSTEM = 'system',
+}
+
+export interface ChatMessage {
+  id: string;
+  speaker: Speaker;
+  text: string;
+  isPartial?: boolean;
+}
