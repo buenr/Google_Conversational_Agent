@@ -17,3 +17,9 @@ export interface VoiceOption {
   name: string;
   displayName: string;
 }
+
+export interface SavedTranscriptSession {
+  id: string;
+  timestamp: number; // Unix timestamp
+  messages: ChatMessage[];
+}
