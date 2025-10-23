@@ -1,4 +1,5 @@
 
+
 export enum Speaker {
   USER = 'user',
   MODEL = 'model',
@@ -10,4 +11,9 @@ export interface ChatMessage {
   speaker: Speaker;
   text: string;
   isPartial?: boolean;
+}
+
+export interface VoiceOption {
+  name: string;
+  displayName: string;
 }

@@ -1,16 +1,25 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { GoogleGenAI, LiveSession, LiveServerMessage, Modality } from '@google/genai';
-import { ChatMessage, Speaker } from './types';
+import { ChatMessage, Speaker, VoiceOption } from './types';
 import { decode, decodeAudioData, encode, createBlob } from './utils/audioUtils';
 import MicButton from './components/MicButton';
 import TranscriptDisplay from './components/TranscriptDisplay';
+
+// Define available AI voices
+const availableVoices: VoiceOption[] = [
+  { name: 'Zephyr', displayName: 'Zephyr (Default)' },
+  { name: 'Puck', displayName: 'Puck' },
+  { name: 'Charon', displayName: 'Charon' },
+  { name: 'Kore', displayName: 'Kore' },
+  { name: 'Fenrir', displayName: 'Fenrir' },
+];
 
 const App: React.FC = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [statusMessage, setStatusMessage] = useState<string>('Press the mic to start the interview.');
+  const [selectedVoice, setSelectedVoice] = useState<string>(availableVoices[0].name); // Default to the first voice
 
   const liveSessionRef = useRef<Promise<LiveSession> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -193,7 +202,7 @@ const App: React.FC = () => {
           inputAudioTranscription: {},
           outputAudioTranscription: {},
           speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: selectedVoice } }, // Use selected voice here
           },
           systemInstruction: `You are an AI interviewer conducting a pre-screening for a potential hire.
           Start the conversation with: "Welcome! Can you please tell me a bit about your experience and what you're looking for in a role?"
@@ -298,12 +307,34 @@ const App: React.FC = () => {
     }
   };
 
+  const handleVoiceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedVoice(event.target.value);
+  };
+
   return (
     <div className="flex flex-col h-[80vh] bg-white rounded-lg shadow-xl p-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">AI Interviewer</h1>
-      <p className="text-gray-600 text-center mb-6">
+      <p className="text-gray-600 text-center mb-4">
         This AI will ask you basic interview questions to help pre-screen your qualifications.
       </p>
+
+      <div className="mb-4 flex justify-center items-center gap-2">
+        <label htmlFor="voice-select" className="text-gray-700 font-medium">Interviewer Voice:</label>
+        <select
+          id="voice-select"
+          value={selectedVoice}
+          onChange={handleVoiceChange}
+          className="p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          aria-label="Select interviewer voice"
+          disabled={isRecording || isLoading}
+        >
+          {availableVoices.map((voice) => (
+            <option key={voice.name} value={voice.name}>
+              {voice.displayName}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <TranscriptDisplay messages={messages} />
 
